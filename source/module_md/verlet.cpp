@@ -74,22 +74,8 @@ void Verlet::apply_thermostat(void)
     else if (mdp.md_thermostat == "anderson")
     {
         if (mdp.my_rank == 0)
-        {
-            double deviation;
-            for (int i = 0; i < ucell.nat; ++i)
-            {
-                if (static_cast<double>(std::rand()) / RAND_MAX <= 1.0 / mdp.md_nraise)
-                {
-                    deviation = sqrt(mdp.md_tlast / allmass[i]);
-                    for (int k = 0; k < 3; ++k)
-                    {
-                        if (ionmbl[i][k])
-                        {
-                            vel[i][k] = deviation * MD_func::gaussrand();
-                        }
-                    }
-                }
-            }
+        {    
+            anderson_set_vel();
         }
 #ifdef __MPI
         MPI_Bcast(vel, ucell.nat * 3, MPI_DOUBLE, 0, MPI_COMM_WORLD);
@@ -125,6 +111,24 @@ void Verlet::thermalize(const int& nraise, const double& current_temp, const dou
     }
 }
 
+void Verlert::anderson_set_vel(void)
+{
+    double deviation;
+    for (int i = 0; i < ucell.nat; ++i)
+    {
+        if (static_cast<double>(std::rand()) / RAND_MAX <= 1.0 / mdp.md_nraise)
+        {
+            deviation = sqrt(mdp.md_tlast / allmass[i]);
+            for (int k = 0; k < 3; ++k)
+            {
+                if (ionmbl[i][k])
+                {
+                    vel[i][k] = deviation * MD_func::gaussrand();
+                }
+            }
+        }
+    }
+}
 
 void Verlet::print_md(std::ofstream& ofs, const bool& cal_stress)
 {
