@@ -35,6 +35,11 @@ class Verlet : public MD_base
      * @param target_temp the target temperature
      */
     void thermalize(const int& nraise, const double& current_temp, const double& target_temp);
-};
+};    
+    /**
+    * @brief set velert when thermostat is anderson
+    *
+    */
+    void anderson_set_vel();
 
 #endif
